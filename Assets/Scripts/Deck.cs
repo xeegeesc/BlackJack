@@ -69,7 +69,33 @@ public class Deck : MonoBehaviour
          * Barajar las cartas aleatoriamente.
          * El método Random.Range(0,n), devuelve un valor entre 0 y n-1
          * Si lo necesitas, puedes definir nuevos arrays.
-         */       
+         */
+
+        Sprite[] auxSprites = new Sprite[52];
+        int[] auxValues = new int[52];
+        int auxAux = 0;
+        for (int i =0; i < faces.Length; i++)
+        {
+            int auxRandom = Random.Range(0, 52);
+            
+            if (auxRandom != auxAux)
+            {
+                auxSprites[i] = faces[auxRandom];
+                auxValues[i] = values[auxRandom];
+                auxAux = auxRandom;
+            }
+            else
+            {
+                auxRandom = Random.Range(0, 52);
+                auxSprites[i] = faces[auxRandom];
+                auxValues[i] = values[auxRandom];
+                auxAux = auxRandom;
+            }
+            
+        }
+        faces = auxSprites;
+        values = auxValues;
+        
     }
 
     void StartGame()
