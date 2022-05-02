@@ -253,7 +253,7 @@ public class Deck : MonoBehaviour
         }
 
         Debug.Log("Casos favorables Entre rango " + casosFavorables);
-        float probabilidad = (float)casosFavorables / 52;
+        float probabilidad = (float)casosFavorables / 49;
         probabilidad = probabilidad * 100;
         Debug.Log("Probabilidad entre rango " + probabilidad);
         probMessage_1.text = probabilidad.ToString();
@@ -317,7 +317,7 @@ public class Deck : MonoBehaviour
         }
 
         Debug.Log("casos favorables Pasarte " + casosFavorables);
-        float probabilidad = (float)casosFavorables / 52;
+        float probabilidad = (float)casosFavorables / 49;
         probabilidad = 1 - probabilidad;
         probabilidad = probabilidad * 100;
         Debug.Log("Probabilidad de pasarte " + probabilidad);
@@ -349,13 +349,23 @@ public class Deck : MonoBehaviour
         /*TODO: 
          * Si estamos en la mano inicial, debemos voltear la primera carta del dealer.
          */
-        
+
         //Repartimos carta al jugador
         PushPlayer();
+        CalculateProbabilities();
+        
 
+        Puntosplayer.text = player.GetComponent<CardHand>().points.ToString();
         /*TODO:
-         * Comprobamos si el jugador ya ha perdido y mostramos mensaje
-         */      
+        * Comprobamos si el jugador ya ha perdido y mostramos mensaje
+        */
+        if (player.GetComponent<CardHand>().points > 21)
+        {
+            hitButton.interactable = false;
+            dealer.GetComponent<CardHand>().cards[0].GetComponent<CardModel>().ToggleFace(true);
+            finalMessage.text = "Has perdido";
+        }
+       
 
     }
 
@@ -365,12 +375,43 @@ public class Deck : MonoBehaviour
          * Si estamos en la mano inicial, debemos voltear la primera carta del dealer.
          */
 
-        /*TODO:
-         * Repartimos cartas al dealer si tiene 16 puntos o menos
-         * El dealer se planta al obtener 17 puntos o más
-         * Mostramos el mensaje del que ha ganado
-         */                
-         
+        hitButton.interactable = false;
+
+        //damos la vuelta a la carta del dealer
+        dealer.GetComponent<CardHand>().cards[0].GetComponent<CardModel>().ToggleFace(true);
+
+
+        while (dealer.GetComponent<CardHand>().points <= 16)
+        {
+            PushDealer();
+            Puntosdealer.text = dealer.GetComponent<CardHand>().points.ToString();
+            //Debug.Log(dealer.GetComponent<CardHand>().points);
+            if (dealer.GetComponent<CardHand>().points > 21)
+            {
+                finalMessage.text = "Has ganado, el dealer se ha pasado";
+                stickButton.interactable = false;
+                
+                return;
+            }
+        }
+
+        if (dealer.GetComponent<CardHand>().points == player.GetComponent<CardHand>().points)
+        {
+            finalMessage.text = "Empate";
+            stickButton.interactable = false;
+        }
+
+        if (dealer.GetComponent<CardHand>().points < player.GetComponent<CardHand>().points)
+        {
+            finalMessage.text = "Has Ganado, tienes mas puntos que el dealer";
+            stickButton.interactable = false;
+        }
+        else
+        {
+            finalMessage.text = "Has Perdido, el dealer tiene mas puntos";
+            stickButton.interactable = false;
+        }
+        Puntosdealer.text = dealer.GetComponent<CardHand>().points.ToString();
     }
 
     public void PlayAgain()
